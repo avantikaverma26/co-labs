@@ -1,7 +1,7 @@
-# *********************************************************************************
+# ***************************
 # * Program name: Hello World                                                     *
-# * Description :                                                                 *
-# *********************************************************************************
+# * Description :  this is a simple display text to terminal function                                                               *
+# ***************************
 
 #ifndef MACOS
 .ifndef CODEGRADE
@@ -16,9 +16,15 @@
 #endif
 
 .text
-# your strings here
+mystring: .asciz "Madhav mch241 - Avantika avanz”
 
-.global my_main                         # make my_main accessible globally
+.global my_main                        
 
 my_main:
-	# IMPLEMENT ME    
+ movq $0 , %rax
+ leaq mystring (% rip ) , %rdi  
+ call printf    
+
+ end:   
+    mov $0, %rdi    
+    call exit
