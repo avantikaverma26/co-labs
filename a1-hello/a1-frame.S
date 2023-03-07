@@ -1,6 +1,6 @@
 # ***************************
 # * Program name: Hello World                                                     *
-# * Description :  this is a simple display text to terminal function                                                               *
+# * Description :                                                                 *
 # ***************************
 
 #ifndef MACOS
@@ -16,15 +16,20 @@
 #endif
 
 .text
-mystring: .asciz "Madhav mch241 - Avantika avanz”
+string:.asciz "Assignment 1"
 
-.global my_main                        
+
+.global my_main                         # make my_main accessible globally
 
 my_main:
- movq $0 , %rax
- leaq mystring (% rip ) , %rdi  
- call printf    
+pushq %rbp
+movq %rsp , %rbp
 
- end:   
-    mov $0, %rdi    
-    call exit
+leaq string(%rip), %rdi
+call printf
+movq $0, %rax
+movq %rbp, %rsp
+popq %rbp
+ret
+
+
