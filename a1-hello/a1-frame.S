@@ -14,22 +14,22 @@
     printf: jmp _printf
     exit: jmp _exit
 #endif
+.data
+string:
+    .asciz "Assignment 1: Avantika Verma ave231 , Madhav Chawla mch241"
+
+
 
 .text
-string:.asciz "Assignment 1"
-
-
-.global my_main                         # make my_main accessible globally
+.global my_main                   # make my_main accessible globally
 
 my_main:
-pushq %rbp
-movq %rsp , %rbp
 
-leaq string(%rip), %rdi
+movq $0, %rax   # checking if the registor is empty
+leaq string(%rip), %rdi # copying the string address to rdi
 call printf
-movq $0, %rax
-movq %rbp, %rsp
-popq %rbp
-ret
 
 
+end:
+mov $0, %rdi
+call exit
