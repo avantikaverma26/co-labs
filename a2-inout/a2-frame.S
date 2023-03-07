@@ -45,7 +45,9 @@ my_main:
         call    exit        # exiting program
 
 inout:
-        # read input and increment it using my_increment
+        pushq   %rbp # Prologue : push the base pointer.
+        movq    %rsp , %rbp # and copy stack pointer to RBP.
+# read input and increment it using my_increment
         movq    $0 , %rax       # no vector registers in use for printf
         leaq    input(%rip) , %rdi       # load address of a string
         call    printf      # Call the printf routine
@@ -62,10 +64,23 @@ inout:
         movq    %rbp , %rsp     # Epilogue : clear local variables from stack.
         popq    %rbp    # Restore caller ’s base pointer.
 
+        pushq   %rbp # Prologue : push the base pointer.
+        movq    %rsp , %rbp # and copy stack pointer to RBP.
+
         ret     # return from subroutine.
           
 my_increment:
-    #inc %rsi
-    #movq $output, %rdi
-    #call printf
-    #ret# IMPLEMENT ME
+        incq    %rax      # incrementing user input
+        movq    %rax,%rdi #call printf
+
+        movq    $0 , %rax       # no vector registers in use for printf
+        leaq    output(%rip) , %rdi       # load address of a string
+        call    printf
+        
+
+        pushq   %rbp # Prologue : push the base pointer.
+        movq    %rsp , %rbp # and copy stack pointer to RBP.
+
+        ret
+# IMPLEMENT ME
+    
