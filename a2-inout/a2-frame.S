@@ -55,33 +55,32 @@ inout:
         call    printf
 
         subq    $16, %rsp        # Reserve stack space for variable
-        leaq    -16(%rbp) , %rsi      # Load address of stack var in rsi
+        leaq    -16(%rbp) , %rsi      # Load address of stack variable in rsi
         leaq    num(%rip) , %rdi         # load first argument of scanf
         movq    $0 , %rax       # no vector registers for scanf
         call    scanf
-        movq    -16(%rbp), %rdi
+        movq    -16(%rbp), %rdi #load num into register
 
         call    my_increment
         
-        movq    %rax, %rsi
-        movq    $0, %rax
-        leaq    text(%rip), %rdi
+        movq    %rax, %rsi #load second argument
+        movq    $0, %rax    #no vector argument in use for printf
+        leaq    text(%rip), %rdi #load address of text to rdi
         call    printf
 
         movq    %rbp , %rsp     # clear variables from stack.
         popq    %rbp    # Restore base pointer
             
-        mov     $0, %rdi
-        call    exit
+        mov     $0, %rdi    #call program exit code
+        call    exit    #exit the program
 
 
 my_increment: # IMPLEMENT ME
 
-        pushq   %rbp #push the base pointer.
-        movq    %rsp , %rbp # and copy stack pointer to RBP.
+        pushq   %rbp    #push the base pointer.
+        movq    %rsp , %rbp     #and copy stack pointer to RBP.
 
         incq    %rdi      # incrementing user input
-
 
         movq %rdi, %rax
         
