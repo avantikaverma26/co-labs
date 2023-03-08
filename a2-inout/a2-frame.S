@@ -43,7 +43,10 @@ my_main: # set up the stack frame
 
         movq     %rbp, %rsp
         popq     %rbp
-        ret
+
+        mov     $0, %rdi    #call program exit code
+        call    exit    #exit the program
+     
 
 inout:
         pushq   %rbp #push the base pointer.
@@ -70,10 +73,8 @@ inout:
 
         movq    %rbp , %rsp     # clear variables from stack.
         popq    %rbp    # Restore base pointer
-            
-        mov     $0, %rdi    #call program exit code
-        call    exit    #exit the program
-
+        ret
+     
 
 my_increment: # IMPLEMENT ME
 
