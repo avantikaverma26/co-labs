@@ -1,7 +1,7 @@
-# *********
+# *
 # * Program name: inout                                                           *
 # * Description :                                                                 *
-# *********
+# *
 
 #ifndef MACOS
 .ifndef CODEGRADE
@@ -18,26 +18,26 @@
 
 .text
 # your strings here
-    string :
+    string:
           .asciz "Assignment 2: inout\n"
-    formatstr :
-            .asciz "%ld"
-    input:
+    inputnum:
             .asciz "Enter a number: "
-    output:
+    text:
             .asciz "The incremented number is: %ld \n"
+    num:
+            .asciz "%ld"
 
 .global my_main                         # make my_main accessible globally
 .global my_increment                    # make my_increment accessible globally
 
 my_main: # set up the stack frame
 
-        pushq   %rbp # Prologue : push the base pointer.
+        pushq   %rbp # push the base pointer.
         movq    %rsp , %rbp # and copy stack pointer to RBP.
         
         movq    $0 , %rax       # no vector registers in use for printf
         leaq    string(%rip) , %rdi       # load address of a string
-        call    printf      # Call the printf routine
+        call    printf      # Call the printf
 
         call    inout   # clear the stack and return
 
@@ -46,50 +46,46 @@ my_main: # set up the stack frame
         ret
 
 inout:
-        pushq   %rbp # Prologue : push the base pointer.
+        pushq   %rbp #push the base pointer.
         movq    %rsp , %rbp # and copy stack pointer to RBP.
         
         # input and increment it using my_increment
         movq    $0 , %rax       # no vector registers in use for printf
-        leaq    input(%rip) , %rdi       # load address of a string
-        call    printf      # Call the printf routine
+        leaq    inputnum(%rip) , %rdi       # load address of a string
+        call    printf
 
         subq    $16, %rsp        # Reserve stack space for variable
         leaq    -16(%rbp) , %rsi      # Load address of stack var in rsi
-        leaq    formatstr(%rip) , %rdi         # load first argument of scanf
+        leaq    num(%rip) , %rdi         # load first argument of scanf
         movq    $0 , %rax       # no vector registers for scanf
-        call    scanf       # Call scanf
-        movq    -16(%rbp), %r8
-          
+        call    scanf
+        movq    -16(%rbp), %rdi
 
-call  my_increment
+        call    my_increment
+        
+        movq    %rax, %rsi
+        movq    $0, %rax
+        leaq    text(%rip), %rdi
+        call    printf
 
-        movq    %rbp , %rsp     # Epilogue : clear local variables from stack.
-        popq    %rbp    # Restore caller ’s base pointer
+        movq    %rbp , %rsp     # clear variables from stack.
+        popq    %rbp    # Restore base pointer
             
         mov     $0, %rdi
-        call exit
-
-
-
+        call    exit
 
 
 my_increment: # IMPLEMENT ME
-        push %rbp
-        movq %rsp, %rbp
 
-        movq    %r8, %rax
-        incq    %rax      # incrementing user input
-        movq    %rax, %r8 #call printf
+        pushq   %rbp #push the base pointer.
+        movq    %rsp , %rbp # and copy stack pointer to RBP.
+
+        incq    %rdi      # incrementing user input
 
 
-        movq  %r8, %rsi
-        movq  $0, %rax
-        leaq output(%rip), %rdi
-        call printf
-
-    
-        movq    %rbp , %rsp     # Epilogue : clear local variables from stack.
-        popq    %rbp    # Restore caller ’s base pointer.
+        movq %rdi, %rax
         
+        movq    %rbp , %rsp     # clear variables from stack.
+        popq    %rbp    # Restore base pointer
+
         ret
