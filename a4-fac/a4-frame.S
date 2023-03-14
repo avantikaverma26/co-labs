@@ -43,37 +43,36 @@ my_main:
     leaq    result(%rip) , %rdi         # load first argument of scanf
     movq    $0 , %rax       # no vector registers for scanf
     call    scanf
-    movq    -16(%rbp), %rbx
+    movq    -16(%rbp), %rcx
+
+    movq    $1, %rax
     
     call    factorial
 
+    movq     %rbp, %rsp
+    popq     %rbp
+    ret
+
+  
+factorial:
+    pushq   %rbp    #push the base pointer.
+    movq    %rsp , %rbp     #and copy stack pointer to RBP.
+  
+    cmpq    $0, %rcx
+    je      end
+    mulq    %rcx
+    decq    %rcx
+    call    factorial
+
+end:
     movq    %rax, %rsi
     movq    $0, %rax
     leaq    text(%rip), %rdi
     call    printf
-
-   
-    movq     %rbp, %rsp
-    popq     %rbp
 
     mov     $0, %rdi    #call program exit code
     call    exit    #exit the program
 
 
 
-   
 
-factorial:
-    pushq   %rbp    #push the base pointer.
-    movq    %rsp , %rbp     #and copy stack pointer to RBP.
-    cmpq    $0, %rbx
-    je      end
-    mulq    %rbx
-    decq    %rbx
-    call    factorial
-
-end:
-    
-    movq    %rbp, %rsp
-    popq    %rbp
-    ret
