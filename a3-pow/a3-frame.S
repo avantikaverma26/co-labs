@@ -20,12 +20,12 @@
 string:
       .asciz "Assignment 3: pow\n"
 basenum:
-        .asciz "Enter a positive base: "
+        .asciz "Enter a positive base:\n"
 exponentnum:
-        .asciz "Enter a positive exponent"
+        .asciz "Enter a positive exponent:\n"
 text:
         .asciz "The pow is: %ld \n"
-num:
+result:
         .asciz "%ld"
 
 # your strings here
@@ -35,48 +35,77 @@ num:
 
 
 my_main:
-        # IMPLEMENT ME
-pushq   %rbp # push the base pointer.
-movq    %rsp , %rbp # and copy stack pointer to RBP.
+    pushq   %rbp #push the base pointer.
+    movq    %rsp , %rbp # and copy stack pointer to RBP.
+#base number
+    movq    $0 , %rax       # no vector registers in use for printf
+    leaq    basenum(%rip) , %rdi   # load address of a string
+    call    printf
 
-movq    $0 , %rax       # no vector registers in use for printf
-leaq    string(%rip) , %rdi       # load address of a string
-call    printf      # Call the printf
+    subq    $16, %rsp        # Reserve stack space for variable
+    leaq    -16(%rbp) , %rsi      # Load address of stack variable in rsi
+    leaq    result(%rip) , %rdi         # load first argument of scanf
+    movq    $0 , %rax       # no vector registers for scanf
+    call    scanf
+    movq    -16(%rbp), %rbx
+# exponenet
+    movq    $0 , %rax       # no vector registers in use for printf
+    leaq    exponentnum(%rip) , %rdi   # load address of a string
+    call    printf
 
-pushq   %rbp #push the base pointer.
-movq    %rsp , %rbp # and copy stack pointer to RBP.
+    subq    $16, %rsp        # Reserve stack space for variable
+    leaq    -16(%rbp) , %rsi      # Load address of stack variable in rsi
+    leaq    result(%rip) , %rdi         # load first argument of scanf
+    movq    $0 , %rax       # no vector registers for scanf
+    call    scanf
+    movq    -16(%rbp), %rcx
 
-# input and increment it using my_increment
-movq    $0 , %rax       # no vector registers in use for printf
-leaq    basenum(%rip) , %rdi       # load address of a string
-call    printf
+    call my_pow
 
-subq    $16, %rsp        # Reserve stack space for variable
-leaq    -16(%rbp) , %rsi      # Load address of stack variable in rsi
-leaq    pow(%rip) , %rdi         # load first argument of scanf
-movq    $0 , %rax       # no vector registers for scanf
-call    scanf
-movq    -16(%rbp), %rdi #load num into register
+    movq $0,%rdi
+    call exit
+    
+
+my_pow:
+
+    pushq   %rbp    #push the base pointer.
+    movq    %rsp , %rbp     #and copy stack pointer to RBP.
 
 
-movq     %rbp, %rsp
-popq     %rbp
+    movq    $1, %rax
+    cmpq     $0, %rcx
+    je     excep
 
-mov     $0, %rdi    #call program exit code
-call    exit    #exit the program
+    loop:
+        mulq    %rbx
+        decq    %rcx
+        cmpq     $0, %rcx
+        je     end
+        jmp     loop
 
-#my_pow:
-        # IMPLEMENT ME
-pushq   %rbp    #push the base pointer.
-movq    %rsp , %rbp     #and copy stack pointer to RBP.
+    excep:
+        movq $1, %rax
+        
+    end:
+        movq    %rax, %rsi
+        movq    $0, %rax    #no vector argument in use for printf
+        leaq    text(%rip), %rdi #load address of text to rdi
+        call    printf
+        
+        movq %rbp, %rsp
+        popq %rbp
 
-movq    $1 , %rax
-movq    exponentnum(%rip) , %rcx
-movq    basenum(%rip) , %rbx
+        movq $0,%rdi
+        call exit
 
-call again
-mul     %rbx
+      
+   
 
-Loop:
-again
 
+
+
+
+
+
+
+    
