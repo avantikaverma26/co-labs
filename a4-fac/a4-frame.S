@@ -17,14 +17,63 @@
 #endif
 
 .text
-# your strings here
+string:
+      .asciz "Assignment 4: factorial\n"
+num:
+        .asciz "Enter a number:\n"
+text:
+        .asciz "The factorial is: %ld \n"
+result:
+        .asciz "%ld"
 
 .global my_main
 .global factorial
 
 
 my_main:
-        # IMPLEMENT ME
+    pushq   %rbp #push the base pointer.
+    movq    %rsp , %rbp # and copy stack pointer to RBP.
+   
+    movq    $0 , %rax       # no vector registers in use for printf
+    leaq    num(%rip) , %rdi   # load address of a string
+    call    printf
+
+    subq    $16, %rsp        # Reserve stack space for variable
+    leaq    -16(%rbp) , %rsi      # Load address of stack variable in rsi
+    leaq    result(%rip) , %rdi         # load first argument of scanf
+    movq    $0 , %rax       # no vector registers for scanf
+    call    scanf
+    movq    -16(%rbp), %rbx
+    
+    call    factorial
+
+    movq    %rax, %rsi
+    movq    $0, %rax
+    leaq    text(%rip), %rdi
+    call    printf
+
+   
+    movq     %rbp, %rsp
+    popq     %rbp
+
+    mov     $0, %rdi    #call program exit code
+    call    exit    #exit the program
+
+
+
+   
 
 factorial:
-        # IMPLEMENT ME
+    pushq   %rbp    #push the base pointer.
+    movq    %rsp , %rbp     #and copy stack pointer to RBP.
+    cmpq    $0, %rbx
+    je      end
+    mulq    %rbx
+    decq    %rbx
+    call    factorial
+
+end:
+    
+    movq    %rbp, %rsp
+    popq    %rbp
+    ret
