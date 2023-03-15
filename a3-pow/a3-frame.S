@@ -1,4 +1,4 @@
-# *********************************************************************************
+  # *********************************************************************************
 # * Program name: pow                                                             *
 # * Description :                                                                 *
 # *********************************************************************************
@@ -47,7 +47,7 @@ my_main:
     leaq    result(%rip) , %rdi         # load first argument of scanf
     movq    $0 , %rax       # no vector registers for scanf
     call    scanf
-    movq    -16(%rbp), %rbx
+    movq    -16(%rbp), %rbx #storing user input for base number in rbx
 # exponenet
     movq    $0 , %rax       # no vector registers in use for printf
     leaq    exponentnum(%rip) , %rdi   # load address of a string
@@ -58,13 +58,13 @@ my_main:
     leaq    result(%rip) , %rdi         # load first argument of scanf
     movq    $0 , %rax       # no vector registers for scanf
     call    scanf
-    movq    -16(%rbp), %rcx
+    movq    -16(%rbp), %rcx #storing user input for exponent in rcx
 
     call my_pow
 
-    movq $0,%rdi
-    call exit
-    
+    movq    %rbp , %rsp     # clear variables from stack.
+    popq    %rbp    # Restore base pointer
+    ret
 
 my_pow:
 
@@ -72,31 +72,30 @@ my_pow:
     movq    %rsp , %rbp     #and copy stack pointer to RBP.
 
 
-    movq    $1, %rax
-    cmpq     $0, %rcx
-    je     excep
+    movq    $1, %rax    #we initialize the value in rax to 1
+    cmpq    $0, %rcx    #we compare the exponent value to 0
+    je      excep   #if equal to 0, then it jumps to the excep case.
 
     loop:
-        mulq    %rbx
-        decq    %rcx
-        cmpq     $0, %rcx
+        mulq    %rbx #we multiply the value in register
+        decq    %rcx    #then we decrement the exponent value
+        cmpq     $0, %rcx   #then we compare if the exponent value is 0
         je     end
-        jmp     loop
+        jmp     loop    #if the exponent value is not 0, the loop repeats
 
     excep:
-        movq $1, %rax
-        
+        movq $1, %rax   #exception for when the user input for exponent is 0, the answer will always be 1
+
     end:
         movq    %rax, %rsi
         movq    $0, %rax    #no vector argument in use for printf
         leaq    text(%rip), %rdi #load address of text to rdi
         call    printf
         
-        movq %rbp, %rsp
-        popq %rbp
+        movq    $0, %rdi    #exit code
+        call    exit
+            
 
-        movq $0,%rdi
-        call exit
 
       
    
